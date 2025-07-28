@@ -5,7 +5,7 @@ import Badge from "@/components/atoms/Badge";
 import ApperIcon from "@/components/ApperIcon";
 import { formatCurrency, calculateProgress, getCategoryColor } from "@/utils/formatters";
 
-const BudgetCard = ({ budget, onEdit }) => {
+const BudgetCard = ({ budget, onEdit, onDelete }) => {
   const progressPercentage = calculateProgress(budget.spent, budget.limit);
   const remaining = budget.limit - budget.spent;
   const isOverBudget = budget.spent > budget.limit;
@@ -32,13 +32,20 @@ const BudgetCard = ({ budget, onEdit }) => {
             </Badge>
           </div>
         </div>
-        
-        <button
-          onClick={() => onEdit(budget)}
-          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <ApperIcon name="Edit" size={16} />
-        </button>
+<div className="flex items-center space-x-1">
+          <button
+            onClick={() => onEdit(budget)}
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ApperIcon name="Edit" size={16} />
+          </button>
+          <button
+            onClick={() => onDelete(budget)}
+            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <ApperIcon name="Trash2" size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-3">

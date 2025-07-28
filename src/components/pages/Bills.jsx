@@ -15,7 +15,9 @@ const Bills = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBillForm, setShowBillForm] = useState(false);
-  const [editingBill, setEditingBill] = useState(null);
+const [editingBill, setEditingBill] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [billToDelete, setBillToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     amount: "",
@@ -114,7 +116,7 @@ const Bills = () => {
     setShowBillForm(true);
   };
 
-  const handleTogglePaid = async (billId) => {
+const handleTogglePaid = async (billId) => {
     try {
       const bill = bills.find(b => b.Id === billId);
       const updatedBill = await billService.update(billId, {
@@ -133,6 +135,27 @@ const Bills = () => {
     }
   };
 
+  const handleDelete = (bill) => {
+    setBillToDelete(bill);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!billToDelete) return;
+
+    try {
+      await billService.delete(billToDelete.Id);
+      setBills(prev => prev.filter(b => b.Id !== billToDelete.Id));
+      toast.success("Bill deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete bill");
+      console.error("Delete bill error:", err);
+    } finally {
+      setShowDeleteModal(false);
+      setBillToDelete(null);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -144,7 +167,6 @@ const Bills = () => {
     setEditingBill(null);
     setShowBillForm(false);
   };
-
   if (loading) return <Loading type="cards" />;
   if (error) return <Error message={error} onRetry={loadBills} />;
 
@@ -193,8 +215,9 @@ const Bills = () => {
             <BillCard
               key={bill.Id}
               bill={bill}
-              onEdit={handleEdit}
+onEdit={handleEdit}
               onTogglePaid={handleTogglePaid}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -257,6 +280,35 @@ const Bills = () => {
             </Button>
           </div>
         </form>
+</Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Bill"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            Are you sure you want to delete the bill{" "}
+            <span className="font-medium">"{billToDelete?.name}"</span>? This action cannot be undone.
+          </p>
+          <div className="flex justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              Delete Bill
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

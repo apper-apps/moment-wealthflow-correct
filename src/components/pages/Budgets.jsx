@@ -15,8 +15,10 @@ const Budgets = () => {
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showBudgetForm, setShowBudgetForm] = useState(false);
+const [showBudgetForm, setShowBudgetForm] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [budgetToDelete, setBudgetToDelete] = useState(null);
   const [formData, setFormData] = useState({
     category: "",
     limit: "",
@@ -108,8 +110,7 @@ const Budgets = () => {
       console.error("Save budget error:", err);
     }
   };
-
-  const handleEdit = (budget) => {
+const handleEdit = (budget) => {
     setEditingBudget(budget);
     setFormData({
       category: budget.category,
@@ -117,6 +118,27 @@ const Budgets = () => {
       period: budget.period,
     });
     setShowBudgetForm(true);
+  };
+
+  const handleDelete = (budget) => {
+    setBudgetToDelete(budget);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!budgetToDelete) return;
+
+    try {
+      await budgetService.delete(budgetToDelete.Id);
+      setBudgets(prev => prev.filter(b => b.Id !== budgetToDelete.Id));
+      toast.success("Budget deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete budget");
+      console.error("Delete budget error:", err);
+    } finally {
+      setShowDeleteModal(false);
+      setBudgetToDelete(null);
+    }
   };
 
   const resetForm = () => {
@@ -165,7 +187,8 @@ const Budgets = () => {
             <BudgetCard
               key={budget.Id}
               budget={budget}
-              onEdit={handleEdit}
+onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -222,6 +245,35 @@ const Budgets = () => {
             </Button>
           </div>
         </form>
+</Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Budget"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            Are you sure you want to delete the budget for{" "}
+            <span className="font-medium">{budgetToDelete?.category}</span>? This action cannot be undone.
+          </p>
+          <div className="flex justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              Delete Budget
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

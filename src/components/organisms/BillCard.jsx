@@ -6,7 +6,7 @@ import ApperIcon from "@/components/ApperIcon";
 import { formatCurrency, formatShortDate } from "@/utils/formatters";
 import { differenceInDays, isPast, isToday } from "date-fns";
 
-const BillCard = ({ bill, onEdit, onTogglePaid }) => {
+const BillCard = ({ bill, onEdit, onTogglePaid, onDelete }) => {
   const dueDate = new Date(bill.dueDate);
   const daysUntilDue = differenceInDays(dueDate, new Date());
   const isOverdue = isPast(dueDate) && !bill.isPaid;
@@ -63,16 +63,24 @@ const BillCard = ({ bill, onEdit, onTogglePaid }) => {
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
           <Badge variant={dueDateStatus.variant}>
             {dueDateStatus.text}
           </Badge>
-          <button
-            onClick={() => onEdit(bill)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ApperIcon name="Edit" size={16} />
-          </button>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => onEdit(bill)}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ApperIcon name="Edit" size={16} />
+            </button>
+            <button
+              onClick={() => onDelete(bill)}
+              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <ApperIcon name="Trash2" size={16} />
+            </button>
+          </div>
         </div>
       </div>
 

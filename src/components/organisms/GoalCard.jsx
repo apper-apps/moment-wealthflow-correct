@@ -4,7 +4,7 @@ import Progress from "@/components/atoms/Progress";
 import ApperIcon from "@/components/ApperIcon";
 import { formatCurrency, calculateProgress, formatRelativeDate } from "@/utils/formatters";
 
-const GoalCard = ({ goal, onEdit }) => {
+const GoalCard = ({ goal, onEdit, onDelete }) => {
   const progressPercentage = calculateProgress(goal.currentAmount, goal.targetAmount);
   const remaining = goal.targetAmount - goal.currentAmount;
   const isCompleted = goal.currentAmount >= goal.targetAmount;
@@ -33,13 +33,20 @@ const GoalCard = ({ goal, onEdit }) => {
             </p>
           </div>
         </div>
-        
-        <button
-          onClick={() => onEdit(goal)}
-          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <ApperIcon name="Edit" size={16} />
-        </button>
+<div className="flex items-center space-x-1">
+          <button
+            onClick={() => onEdit(goal)}
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ApperIcon name="Edit" size={16} />
+          </button>
+          <button
+            onClick={() => onDelete(goal)}
+            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <ApperIcon name="Trash2" size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">

@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
-import GoalCard from "@/components/organisms/GoalCard";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import goalService from "@/services/api/goalService";
+import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/molecules/Modal";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
+import GoalCard from "@/components/organisms/GoalCard";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import goalService from "@/services/api/goalService";
-import { toast } from "react-toastify";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 
 const Goals = () => {
   const [goals, setGoals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showGoalForm, setShowGoalForm] = useState(false);
+const [showGoalForm, setShowGoalForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [goalToDelete, setGoalToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     targetAmount: "",
@@ -107,7 +109,7 @@ const Goals = () => {
       toast.error("Failed to save goal");
       console.error("Save goal error:", err);
     }
-  };
+};
 
   const handleEdit = (goal) => {
     setEditingGoal(goal);
@@ -118,6 +120,27 @@ const Goals = () => {
       targetDate: new Date(goal.targetDate).toISOString().split("T")[0],
     });
     setShowGoalForm(true);
+  };
+
+  const handleDelete = (goal) => {
+    setGoalToDelete(goal);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!goalToDelete) return;
+
+    try {
+      await goalService.delete(goalToDelete.Id);
+      setGoals(prev => prev.filter(g => g.Id !== goalToDelete.Id));
+      toast.success("Goal deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete goal");
+      console.error("Delete goal error:", err);
+    } finally {
+      setShowDeleteModal(false);
+      setGoalToDelete(null);
+    }
   };
 
   const resetForm = () => {
@@ -166,8 +189,9 @@ const Goals = () => {
           {goals.map((goal) => (
             <GoalCard
               key={goal.Id}
-              goal={goal}
+goal={goal}
               onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -231,6 +255,36 @@ const Goals = () => {
             </Button>
           </div>
         </form>
+</form>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Goal"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            Are you sure you want to delete the goal{" "}
+            <span className="font-medium">"{goalToDelete?.name}"</span>? This action cannot be undone.
+          </p>
+          <div className="flex justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              Delete Goal
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
