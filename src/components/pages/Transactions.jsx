@@ -112,18 +112,27 @@ const handleDeleteTransaction = async (transactionId) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
           <p className="text-gray-600">Track all your income and expenses</p>
         </div>
-<Button 
-          variant="primary" 
-          onClick={handleAddTransaction}
-        >
-          <ApperIcon name="Plus" size={16} className="mr-2" />
-          Add Transaction
-        </Button>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={handleConnectBank}
+          >
+            <ApperIcon name="Landmark" size={16} className="mr-2" />
+            Connect Bank Account
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleAddTransaction}
+          >
+            <ApperIcon name="Plus" size={16} className="mr-2" />
+            Add Transaction
+          </Button>
+        </div>
       </div>
 
       {/* Transactions List */}
