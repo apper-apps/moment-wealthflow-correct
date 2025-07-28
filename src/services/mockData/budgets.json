@@ -1,0 +1,51 @@
+[
+  {
+    "Id": 1,
+    "category": "food",
+    "limit": 500.00,
+    "spent": 328.75,
+    "period": "monthly"
+  },
+  {
+    "Id": 2,
+    "category": "transportation",
+    "limit": 300.00,
+    "spent": 134.99,
+    "period": "monthly"
+  },
+  {
+    "Id": 3,
+    "category": "entertainment",
+    "limit": 200.00,
+    "spent": 60.99,
+    "period": "monthly"
+  },
+  {
+    "Id": 4,
+    "category": "shopping",
+    "limit": 400.00,
+    "spent": 299.99,
+    "period": "monthly"
+  },
+  {
+    "Id": 5,
+    "category": "utilities",
+    "limit": 250.00,
+    "spent": 120.00,
+    "period": "monthly"
+  },
+  {
+    "Id": 6,
+    "category": "healthcare",
+    "limit": 150.00,
+    "spent": 65.00,
+    "period": "monthly"
+  },
+  {
+    "Id": 7,
+    "category": "education",
+    "limit": 200.00,
+    "spent": 150.00,
+    "period": "monthly"
+  }
+]

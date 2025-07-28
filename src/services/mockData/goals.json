@@ -1,0 +1,44 @@
+[
+  {
+    "Id": 1,
+    "name": "Emergency Fund",
+    "targetAmount": 10000.00,
+    "currentAmount": 6750.00,
+    "targetDate": "2024-12-31T23:59:59.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Vacation to Europe",
+    "targetAmount": 5000.00,
+    "currentAmount": 2250.00,
+    "targetDate": "2024-08-15T23:59:59.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "New Laptop",
+    "targetAmount": 2500.00,
+    "currentAmount": 1800.00,
+    "targetDate": "2024-06-30T23:59:59.000Z"
+  },
+  {
+    "Id": 4,
+    "name": "Home Down Payment",
+    "targetAmount": 50000.00,
+    "currentAmount": 18500.00,
+    "targetDate": "2025-12-31T23:59:59.000Z"
+  },
+  {
+    "Id": 5,
+    "name": "Wedding Fund",
+    "targetAmount": 15000.00,
+    "currentAmount": 8200.00,
+    "targetDate": "2024-10-15T23:59:59.000Z"
+  },
+  {
+    "Id": 6,
+    "name": "Car Upgrade",
+    "targetAmount": 8000.00,
+    "currentAmount": 3200.00,
+    "targetDate": "2024-09-30T23:59:59.000Z"
+  }
+]

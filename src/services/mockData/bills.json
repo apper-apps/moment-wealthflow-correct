@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "name": "Electric Bill",
+    "amount": 120.00,
+    "dueDate": "2024-01-25T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  },
+  {
+    "Id": 2,
+    "name": "Internet Service",
+    "amount": 79.99,
+    "dueDate": "2024-01-20T23:59:59.000Z",
+    "isPaid": true,
+    "recurring": true
+  },
+  {
+    "Id": 3,
+    "name": "Cell Phone",
+    "amount": 85.00,
+    "dueDate": "2024-01-28T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  },
+  {
+    "Id": 4,
+    "name": "Car Insurance",
+    "amount": 156.50,
+    "dueDate": "2024-01-30T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  },
+  {
+    "Id": 5,
+    "name": "Rent",
+    "amount": 1200.00,
+    "dueDate": "2024-02-01T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  },
+  {
+    "Id": 6,
+    "name": "Credit Card Payment",
+    "amount": 275.00,
+    "dueDate": "2024-01-22T23:59:59.000Z",
+    "isPaid": true,
+    "recurring": false
+  },
+  {
+    "Id": 7,
+    "name": "Water Bill",
+    "amount": 45.25,
+    "dueDate": "2024-01-26T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  },
+  {
+    "Id": 8,
+    "name": "Netflix Subscription",
+    "amount": 15.99,
+    "dueDate": "2024-01-18T23:59:59.000Z",
+    "isPaid": true,
+    "recurring": true
+  },
+  {
+    "Id": 9,
+    "name": "Gym Membership",
+    "amount": 39.99,
+    "dueDate": "2024-01-24T23:59:59.000Z",
+    "isPaid": false,
+    "recurring": true
+  }
+]
