@@ -254,7 +254,6 @@ goal={goal}
               {editingGoal ? "Update Goal" : "Create Goal"}
             </Button>
           </div>
-        </form>
 </form>
       </Modal>
 
