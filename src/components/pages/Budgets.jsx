@@ -19,10 +19,11 @@ const [showBudgetForm, setShowBudgetForm] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [budgetToDelete, setBudgetToDelete] = useState(null);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     category: "",
     limit: "",
     period: "monthly",
+    description: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -62,7 +63,7 @@ const [showBudgetForm, setShowBudgetForm] = useState(false);
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const errors = {};
 
     if (!formData.category) {
@@ -72,6 +73,8 @@ const [showBudgetForm, setShowBudgetForm] = useState(false);
     if (!formData.limit || parseFloat(formData.limit) <= 0) {
       errors.limit = "Budget limit must be greater than 0";
     }
+
+    // Description is optional, no validation needed
 
     return errors;
   };
@@ -116,6 +119,7 @@ const handleEdit = (budget) => {
       category: budget.category,
       limit: budget.limit.toString(),
       period: budget.period,
+      description: budget.description || "",
     });
     setShowBudgetForm(true);
   };
@@ -141,11 +145,12 @@ const handleEdit = (budget) => {
     }
   };
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       category: "",
       limit: "",
       period: "monthly",
+      description: "",
     });
     setFormErrors({});
     setEditingBudget(null);
@@ -227,7 +232,7 @@ onEdit={handleEdit}
             placeholder="0.00"
           />
 
-          <Select
+<Select
             label="Period"
             value={formData.period}
             onChange={(e) => handleFormChange("period", e.target.value)}
@@ -235,6 +240,16 @@ onEdit={handleEdit}
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
           </Select>
+
+          <Input
+            label="Description (Optional)"
+            as="textarea"
+            rows={3}
+            value={formData.description}
+            onChange={(e) => handleFormChange("description", e.target.value)}
+            placeholder="Add a description for this budget..."
+            error={formErrors.description}
+          />
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="ghost" onClick={resetForm}>

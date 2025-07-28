@@ -6,6 +6,7 @@ const Input = React.forwardRef(({
   type = "text", 
   label,
   error,
+  as = "input",
   ...props 
 }, ref) => {
   return (
@@ -15,16 +16,28 @@ const Input = React.forwardRef(({
           {label}
         </label>
       )}
-      <input
-        type={type}
-        className={cn(
-          "w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white",
-          error && "border-red-300 focus:border-red-500 focus:ring-red-200",
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
+{as === "textarea" ? (
+        <textarea
+          className={cn(
+            "w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white resize-vertical min-h-[80px]",
+            error && "border-red-300 focus:border-red-500 focus:ring-red-200",
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+      ) : (
+        <input
+          type={type}
+          className={cn(
+            "w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white",
+            error && "border-red-300 focus:border-red-500 focus:ring-red-200",
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+      )}
       {error && (
         <p className="text-sm text-red-600">{error}</p>
       )}

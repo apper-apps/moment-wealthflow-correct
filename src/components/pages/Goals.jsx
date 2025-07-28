@@ -18,11 +18,12 @@ const [showGoalForm, setShowGoalForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [goalToDelete, setGoalToDelete] = useState(null);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: "",
     targetAmount: "",
     currentAmount: "",
     targetDate: "",
+    description: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -51,7 +52,7 @@ const [showGoalForm, setShowGoalForm] = useState(false);
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const errors = {};
 
     if (!formData.name.trim()) {
@@ -71,6 +72,8 @@ const [showGoalForm, setShowGoalForm] = useState(false);
     } else if (new Date(formData.targetDate) <= new Date()) {
       errors.targetDate = "Target date must be in the future";
     }
+
+    // Description is optional, no validation needed
 
     return errors;
   };
@@ -111,13 +114,14 @@ const [showGoalForm, setShowGoalForm] = useState(false);
     }
 };
 
-  const handleEdit = (goal) => {
+const handleEdit = (goal) => {
     setEditingGoal(goal);
     setFormData({
       name: goal.name,
       targetAmount: goal.targetAmount.toString(),
       currentAmount: goal.currentAmount.toString(),
       targetDate: new Date(goal.targetDate).toISOString().split("T")[0],
+      description: goal.description || "",
     });
     setShowGoalForm(true);
   };
@@ -143,12 +147,13 @@ const [showGoalForm, setShowGoalForm] = useState(false);
     }
   };
 
-  const resetForm = () => {
+const resetForm = () => {
     setFormData({
       name: "",
       targetAmount: "",
       currentAmount: "",
       targetDate: "",
+      description: "",
     });
     setFormErrors({});
     setEditingGoal(null);
@@ -237,13 +242,23 @@ goal={goal}
             />
           </div>
 
-          <Input
+<Input
             label="Target Date"
             type="date"
             value={formData.targetDate}
             onChange={(e) => handleFormChange("targetDate", e.target.value)}
             error={formErrors.targetDate}
             min={new Date().toISOString().split("T")[0]}
+          />
+
+          <Input
+            label="Description (Optional)"
+            as="textarea"
+            rows={3}
+            value={formData.description}
+            onChange={(e) => handleFormChange("description", e.target.value)}
+            placeholder="Add a description for this goal..."
+            error={formErrors.description}
           />
 
           <div className="flex justify-end space-x-3 pt-4">
