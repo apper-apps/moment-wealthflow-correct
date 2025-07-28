@@ -1,25 +1,127 @@
-import React, { useState, useEffect } from "react";
-import ChartCard from "@/components/organisms/ChartCard";
-import StatCard from "@/components/molecules/StatCard";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import ApperIcon from "@/components/ApperIcon";
-import { formatCurrency } from "@/utils/formatters";
+import React, { useEffect, useState } from "react";
+import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
+import { toast } from "react-toastify";
 import transactionService from "@/services/api/transactionService";
 import budgetService from "@/services/api/budgetService";
-import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
+import ApperIcon from "@/components/ApperIcon";
+import StatCard from "@/components/molecules/StatCard";
+import ChartCard from "@/components/organisms/ChartCard";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Card from "@/components/atoms/Card";
+import { formatCurrency } from "@/utils/formatters";
 
 const Reports = () => {
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [timeRange, setTimeRange] = useState("6months");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [timeRange, setTimeRange] = useState("6months");
 
-  const timeRangeOptions = [
+  const handleExport = () => {
+    try {
+      toast.info("Preparing report export...");
+
+      // Calculate data for export
+      const monthsToShow = timeRange === "3months" ? 3 : timeRange === "6months" ? 6 : 12;
+      const startDate = startOfMonth(subMonths(new Date(), monthsToShow - 1));
+      const endDate = endOfMonth(new Date());
+      
+      const filteredTransactions = transactions.filter(transaction => {
+        const transactionDate = new Date(transaction.date);
+        return transactionDate >= startDate && transactionDate <= endDate;
+      });
+
+      // Prepare CSV data
+      let csvContent = "WealthFlow Financial Report\n";
+      csvContent += `Generated: ${format(new Date(), "MMM dd, yyyy 'at' HH:mm")}\n`;
+      csvContent += `Period: ${format(startDate, "MMM yyyy")} - ${format(endDate, "MMM yyyy")}\n\n`;
+
+      // Summary section
+      const totalIncome = filteredTransactions.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+      const totalExpenses = filteredTransactions.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+      const netSavings = totalIncome - totalExpenses;
+      const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) * 100 : 0;
+
+      csvContent += "FINANCIAL SUMMARY\n";
+      csvContent += "Metric,Amount\n";
+      csvContent += `Total Income,${formatCurrency(totalIncome)}\n`;
+      csvContent += `Total Expenses,${formatCurrency(totalExpenses)}\n`;
+      csvContent += `Net Savings,${formatCurrency(netSavings)}\n`;
+      csvContent += `Savings Rate,${savingsRate.toFixed(1)}%\n\n`;
+
+      // Monthly trends
+      csvContent += "MONTHLY TRENDS\n";
+      csvContent += "Month,Income,Expenses,Savings\n";
+      
+      for (let i = 0; i < monthsToShow; i++) {
+        const monthStart = startOfMonth(subMonths(new Date(), monthsToShow - 1 - i));
+        const monthEnd = endOfMonth(monthStart);
+        const monthTransactions = filteredTransactions.filter(transaction => {
+          const transactionDate = new Date(transaction.date);
+          return transactionDate >= monthStart && transactionDate <= monthEnd;
+        });
+        
+        const income = monthTransactions.filter(t => t.type === "income").reduce((sum, t) => sum + t.amount, 0);
+        const expenses = monthTransactions.filter(t => t.type === "expense").reduce((sum, t) => sum + t.amount, 0);
+        const savings = income - expenses;
+        
+        csvContent += `${format(monthStart, "MMM yyyy")},${formatCurrency(income)},${formatCurrency(expenses)},${formatCurrency(savings)}\n`;
+      }
+
+      // Expense categories
+      const expensesByCategory = {};
+      filteredTransactions.filter(t => t.type === "expense").forEach(transaction => {
+        expensesByCategory[transaction.category] = (expensesByCategory[transaction.category] || 0) + transaction.amount;
+      });
+
+      csvContent += "\nEXPENSE BREAKDOWN BY CATEGORY\n";
+      csvContent += "Category,Amount,Percentage\n";
+      Object.entries(expensesByCategory)
+        .sort(([,a], [,b]) => b - a)
+        .forEach(([category, amount]) => {
+          const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
+          csvContent += `${category},${formatCurrency(amount)},${percentage.toFixed(1)}%\n`;
+        });
+
+      // Income categories
+      const incomeByCategory = {};
+      filteredTransactions.filter(t => t.type === "income").forEach(transaction => {
+        incomeByCategory[transaction.category] = (incomeByCategory[transaction.category] || 0) + transaction.amount;
+      });
+
+      if (Object.keys(incomeByCategory).length > 0) {
+        csvContent += "\nINCOME BREAKDOWN BY CATEGORY\n";
+        csvContent += "Category,Amount,Percentage\n";
+        Object.entries(incomeByCategory)
+          .sort(([,a], [,b]) => b - a)
+          .forEach(([category, amount]) => {
+            const percentage = totalIncome > 0 ? (amount / totalIncome) * 100 : 0;
+            csvContent += `${category},${formatCurrency(amount)},${percentage.toFixed(1)}%\n`;
+          });
+      }
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `wealthflow-report-${format(new Date(), "yyyy-MM-dd")}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Financial report exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export report. Please try again.");
+    }
+  };
+
+const timeRangeOptions = [
     { value: "3months", label: "Last 3 Months" },
     { value: "6months", label: "Last 6 Months" },
     { value: "12months", label: "Last 12 Months" },
@@ -179,7 +281,7 @@ const Reports = () => {
             ))}
           </Select>
           
-          <Button variant="outline" size="sm">
+<Button variant="outline" size="sm" onClick={handleExport}>
             <ApperIcon name="Download" size={16} className="mr-2" />
             Export
           </Button>
